@@ -18,8 +18,7 @@ WinIsland brings the **Dynamic Island** experience to Windows.
 
 ## Download
 
-No builds are published from this mirror. Build from source, or try the project
-website if it is still reachable: <https://tanikaze.icu/>.
+No builds are published from this mirror. Build from source pls
 
 ## Build
 
