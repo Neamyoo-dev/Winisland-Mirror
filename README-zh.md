@@ -6,40 +6,28 @@
 
 [English](./README.md) | 简体中文
 
+> [!IMPORTANT]
+> **本仓库是个人镜像。** 它是 WinIsland 源码及其完整历史的个人副本，在原始组织不可访问之后保留下来。
+>
+> 本仓库**不接受任何 PR 和 Issue**。在这里提交的任何内容都会被直接关闭，不做审核。没有支持承诺，也没有发布计划。
+
 WinIsland 为 Windows 带来**灵动岛**体验。
 
 ## 下载
 
-你可以从 [GitHub Releases](https://github.com/WinIslandProject/WinIsland/releases) 或[我们的网站](https://tanikaze.icu/)下载 WinIsland。
-
-## 社区
-
-加入 QQ 群：`435799156`
-
-## 支持项目
-
-<a href="https://eatgrapes.github.io/Donate_to_me/" target="_blank">
-  <img src="https://img.shields.io/badge/Support_WinIsland-7C3AED?style=for-the-badge&logo=buymeacoffee&logoColor=white" alt="支持 WinIsland">
-</a>
+本镜像不发布构建产物。请从源码构建，或尝试访问项目网站（如果仍然可用）：<https://tanikaze.icu/>。
 
 ## 构建项目
 
 安装包含 **Cargo** 的 **Rust** 工具链，然后运行：
 
 ```cmd
-git clone https://github.com/WinIslandProject/WinIsland.git
+git clone https://github.com/Neamyoo-dev/Winisland-Mirror.git
 
-cd WinIsland
+cd Winisland-Mirror
 
 cargo build --release
 ```
-
-## 贡献
-
-欢迎参与贡献和提交 PR。提交前，请先阅读[贡献指南](CONTRIBUTING-zh.md)。
-
-> [!IMPORTANT]
-> 所有未遵守[贡献指南](CONTRIBUTING-zh.md)的 PR 都将被关闭。
 
 ## 隐私
 

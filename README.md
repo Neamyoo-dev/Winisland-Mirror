@@ -6,44 +6,37 @@
 
 English | [简体中文](./README-zh.md)
 
+> [!IMPORTANT]
+> **This repository is a personal mirror.** It is one person's copy of the
+> WinIsland source and its full history, kept alive after the original
+> organisation stopped being reachable.
+>
+> It does **not** accept pull requests or issues. Anything opened here is closed
+> without review. There is no support commitment and no release schedule.
+
 WinIsland brings the **Dynamic Island** experience to Windows.
 
 ## Download
 
-Download WinIsland from [GitHub Releases](https://github.com/WinIslandProject/WinIsland/releases) or [our website](https://tanikaze.icu/).
-
-## Community
-
-Join the QQ group: `435799156`
-
-## Support
-
-<a href="https://eatgrapes.github.io/Donate_to_me/" target="_blank">
-  <img src="https://img.shields.io/badge/Support_WinIsland-7C3AED?style=for-the-badge&logo=buymeacoffee&logoColor=white" alt="Support WinIsland">
-</a>
+No builds are published from this mirror. Build from source, or try the project
+website if it is still reachable: <https://tanikaze.icu/>.
 
 ## Build
 
 Install the **Rust** toolchain, which includes **Cargo**, then run:
 
 ```cmd
-git clone https://github.com/WinIslandProject/WinIsland.git
+git clone https://github.com/Neamyoo-dev/Winisland-Mirror.git
 
-cd WinIsland
+cd Winisland-Mirror
 
 cargo build --release
 ```
 
-## Contributing
-
-Contributions and pull requests are welcome. Please read the [contribution guidelines](CONTRIBUTING.md) before submitting a PR.
-
-> [!IMPORTANT]
-> PRs that do not follow the [contribution guidelines](CONTRIBUTING.md) will be closed.
-
 ## Privacy
 
-WinIsland collects no telemetry. See the [privacy policy](PRIVACY.md) for details on what information it processes and which features use the network.
+WinIsland collects no telemetry. See the [privacy policy](PRIVACY.md) for what it
+processes and which features use the network.
 
 ## License
 
