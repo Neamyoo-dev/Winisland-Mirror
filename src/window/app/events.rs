@@ -100,7 +100,9 @@ impl App {
                     self.install_zip_drop(&path);
                 }
                 PlatformEvent::MouseWheel { delta, .. } => {
-                    let (px, py) = get_global_cursor_pos();
+                    let Some((px, py)) = get_global_cursor_pos() else {
+                        return;
+                    };
                     if self.handle_mouse_wheel(delta, px, py) {
                         win.request_redraw();
                     }
@@ -113,7 +115,9 @@ impl App {
                     {
                         return;
                     }
-                    let (px, py) = get_global_cursor_pos();
+                    let Some((px, py)) = get_global_cursor_pos() else {
+                        return;
+                    };
                     if button == MouseButton::Left {
                         self.handle_input(state, px, py, InputSource::Mouse);
                     } else if button == MouseButton::Right {
