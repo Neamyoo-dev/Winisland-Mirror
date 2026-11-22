@@ -5,7 +5,7 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use crate::config::{
-    AppConfig, MAX_HIDDEN_WIDTH, MIN_HIDDEN_WIDTH, WIDGET_GRID_SLOTS, ensure_settings_widget,
+    AppConfig, MIN_HIDDEN_WIDTH, WIDGET_GRID_SLOTS, clamp_schema_numbers, ensure_settings_widget,
     migrate, normalize_compact_widget_layout, normalize_expanded_pages, normalize_resource_metrics,
     set_resource_widget_span,
 };
@@ -125,52 +125,9 @@ pub fn load_config_at(path: &Path) -> AppConfig {
     if migrate(&mut config, loaded_version) {
         migrated = true;
     }
-    config.compact_scale = config.compact_scale.clamp(0.5, 5.0);
-    config.expanded_scale = config.expanded_scale.clamp(0.5, 5.0);
-    config.base_width = config.base_width.clamp(40.0, 400.0);
-    config.base_height = config.base_height.clamp(15.0, 200.0);
-    config.lyrics_side_gap = if config.lyrics_side_gap.is_finite() {
-        config.lyrics_side_gap.clamp(0.0, 32.0)
-    } else {
-        AppConfig::default().lyrics_side_gap
-    };
-    config.music_text_y_offset = if config.music_text_y_offset.is_finite() {
-        config.music_text_y_offset.clamp(-32.0, 32.0)
-    } else {
-        AppConfig::default().music_text_y_offset
-    };
-    config.music_text_line_spacing = if config.music_text_line_spacing.is_finite() {
-        config.music_text_line_spacing.clamp(8.0, 64.0)
-    } else {
-        AppConfig::default().music_text_line_spacing
-    };
-    config.liquid_glass_blur = if config.liquid_glass_blur.is_finite() {
-        config.liquid_glass_blur.clamp(0.0, 30.0)
-    } else {
-        AppConfig::default().liquid_glass_blur
-    };
-    config.liquid_glass_refraction = if config.liquid_glass_refraction.is_finite() {
-        config.liquid_glass_refraction.clamp(0.0, 400.0)
-    } else {
-        AppConfig::default().liquid_glass_refraction
-    };
-    config.liquid_glass_dispersion = if config.liquid_glass_dispersion.is_finite() {
-        config.liquid_glass_dispersion.clamp(0.0, 100.0)
-    } else {
-        AppConfig::default().liquid_glass_dispersion
-    };
-    config.liquid_glass_tint = if config.liquid_glass_tint.is_finite() {
-        config.liquid_glass_tint.clamp(0.0, 200.0)
-    } else {
-        AppConfig::default().liquid_glass_tint
-    };
-    config.glass_blur = if config.glass_blur.is_finite() {
-        config.glass_blur.clamp(0.0, 50.0)
-    } else {
-        AppConfig::default().glass_blur
-    };
-    config.expanded_width = config.expanded_width.clamp(200.0, 2000.0);
-    config.expanded_height = config.expanded_height.clamp(100.0, 1000.0);
+    if clamp_schema_numbers(&mut config) {
+        migrated = true;
+    }
     let resource_span =
         set_resource_widget_span(config.resource_widget_columns, config.resource_widget_rows);
     if (config.resource_widget_columns, config.resource_widget_rows) != resource_span {
@@ -180,13 +137,6 @@ pub fn load_config_at(path: &Path) -> AppConfig {
     }
     if config.island_style == "mica" {
         config.island_style = "default".to_string();
-        migrated = true;
-    }
-    let hidden_width = config
-        .hidden_width
-        .clamp(MIN_HIDDEN_WIDTH, MAX_HIDDEN_WIDTH);
-    if hidden_width != config.hidden_width {
-        config.hidden_width = hidden_width;
         migrated = true;
     }
     if !matches!(config.lyrics_mode.as_str(), "online" | "lrc") {
