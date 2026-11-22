@@ -505,7 +505,11 @@ impl App {
             log::error!("Cannot open settings without the shared D3D12 renderer");
             return;
         };
-        settings.create_window(renderer, target_monitor);
+        if let Err(error) = settings.create_window(renderer, target_monitor) {
+            log::error!("Failed to open settings window: {error}");
+            Self::show_toast("Settings", "The settings window could not be opened");
+            return;
+        }
         settings.set_plugin_inventory_scan(self.plugin_mgr.installed_plugins_async());
         if let Some(catalog) = self.marketplace_catalog.clone() {
             settings.set_marketplace_catalog(catalog);
