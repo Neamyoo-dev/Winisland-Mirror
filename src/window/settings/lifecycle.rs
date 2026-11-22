@@ -116,6 +116,8 @@ impl SettingsApp {
         target_monitor: Option<MonitorRef>,
     ) {
         self.target_monitor = target_monitor;
+        #[cfg(debug_assertions)]
+        self.verify_setting_placement();
         let id = window()
             .create_settings(SettingsSpec {
                 title: "WinIsland Settings",

@@ -230,6 +230,14 @@ impl<A> SettingsPage<A> {
     pub(crate) fn into_items(self) -> Vec<SettingsItem> {
         self.items
     }
+
+    /// Every config field this page places.
+    pub(crate) fn setting_fields(&self) -> impl Iterator<Item = AppConfigField> + '_ {
+        self.actions.iter().filter_map(|action| match action {
+            Some(RowAction::Setting(field)) => Some(*field),
+            _ => None,
+        })
+    }
 }
 
 #[derive(Clone, Copy)]
@@ -306,6 +314,38 @@ impl SettingsApp {
         self.anim
             .set_with_speed(super::POPUP_OPACITY_KEY, 1.0, 0.25);
         self.request_redraw();
+    }
+
+    /// Debug-only guard that every `#[setting]` field has a row somewhere.
+    ///
+    /// `Settings::FIELDS` is generated but never walked at runtime, so a new
+    /// field that no page places would otherwise be invisible: it exists in the
+    /// config file and in the schema, but the user can never reach it.
+    #[cfg(debug_assertions)]
+    pub(crate) fn verify_setting_placement(&self) {
+        use std::collections::HashSet;
+
+        use winisland_core::config::AppConfig;
+        use winisland_utils::settings::Settings;
+
+        let mut placed = HashSet::new();
+        placed.extend(self.build_general_page().setting_fields());
+        placed.extend(self.build_appearance_page().setting_fields());
+        placed.extend(self.build_layout_page().setting_fields());
+        placed.extend(self.build_behavior_page().setting_fields());
+        placed.extend(self.build_alerts_page().setting_fields());
+        placed.extend(self.build_music_page().setting_fields());
+        #[cfg(feature = "lingosoul")]
+        placed.extend(self.build_lingosoul_page().setting_fields());
+        let missing: Vec<&'static str> = AppConfig::FIELDS
+            .iter()
+            .filter(|field| !placed.contains(field))
+            .map(|field| AppConfig::schema(*field).key)
+            .collect();
+        debug_assert!(
+            missing.is_empty(),
+            "settings fields are placed on no page: {missing:?}"
+        );
     }
 
     pub(crate) fn persist_settings_change(&mut self) {
