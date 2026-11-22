@@ -570,8 +570,6 @@ impl App {
                     let old_max_w = self.config.expanded_width;
                     let old_max_h = self.config.expanded_height;
                     let old_style = self.config.island_style.clone();
-                    let old_mini_shape = self.config.mini_cover_shape.clone();
-                    let old_expanded_shape = self.config.expanded_cover_shape.clone();
                     let old_font = (
                         self.config.custom_font_path.clone(),
                         self.config.font_family.clone(),
@@ -630,12 +628,6 @@ impl App {
 
                     if old_style != self.config.island_style {
                         crate::utils::backdrop::clear_blurred_cover_cache();
-                    }
-
-                    if old_mini_shape != self.config.mini_cover_shape
-                        || old_expanded_shape != self.config.expanded_cover_shape
-                    {
-                        crate::ui::expanded::music_view::clear_cover_cache();
                     }
 
                     if old_font

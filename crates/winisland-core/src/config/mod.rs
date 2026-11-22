@@ -172,11 +172,6 @@ pub struct AppConfig {
     #[educe(Default = "system")]
     #[setting(choice("system" => "theme_system", "light" => "theme_light", "dark" => "theme_dark"))]
     pub settings_theme: String,
-    #[educe(Default = "square")]
-    pub mini_cover_shape: String,
-    #[educe(Default = "square")]
-    pub expanded_cover_shape: String,
-    pub cover_rotate: bool,
     #[educe(Default = "stable")]
     #[setting(choice("stable" => "channel_stable", "beta" => "channel_beta"))]
     pub update_channel: String,
