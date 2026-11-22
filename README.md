@@ -18,7 +18,11 @@ WinIsland brings the **Dynamic Island** experience to Windows.
 
 ## Download
 
-No builds are published from this mirror. Build from source pls
+Stable builds are published from this mirror's GitHub Actions. The installer is
+signed with a self-signed certificate, so Windows shows a SmartScreen warning the
+first time it runs; check where the file came from before running it. These are
+personal builds: no support commitment and no schedule. Build from source below
+if you would rather not install one.
 
 ## Build
 
