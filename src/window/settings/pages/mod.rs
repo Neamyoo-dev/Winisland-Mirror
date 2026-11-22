@@ -316,13 +316,16 @@ impl SettingsApp {
         self.request_redraw();
     }
 
-    /// Debug-only guard that every `#[setting]` field has a row somewhere.
+    /// Debug-only report of `#[setting]` fields this config's pages do not place.
     ///
-    /// `Settings::FIELDS` is generated but never walked at runtime, so a new
-    /// field that no page places would otherwise be invisible: it exists in the
-    /// config file and in the schema, but the user can never reach it.
+    /// Rows can be conditional: the lyrics rows disappear while lyrics are off,
+    /// and the glass rows while another island style is in use. "Absent" is
+    /// therefore a question to look at, not a failure, so this reports instead of
+    /// asserting — a debug build must not refuse to open Settings. Whoever wants
+    /// a hard guarantee needs a static check of the `page.setting(..)` call
+    /// sites, not a check of one window's state.
     #[cfg(debug_assertions)]
-    pub(crate) fn verify_setting_placement(&self) {
+    pub(crate) fn report_unplaced_setting_fields(&self) {
         use std::collections::HashSet;
 
         use winisland_core::config::AppConfig;
@@ -342,10 +345,9 @@ impl SettingsApp {
             .filter(|field| !placed.contains(field))
             .map(|field| AppConfig::schema(*field).key)
             .collect();
-        debug_assert!(
-            missing.is_empty(),
-            "settings fields are placed on no page: {missing:?}"
-        );
+        if !missing.is_empty() {
+            log::debug!("settings fields not placed by this config: {missing:?}");
+        }
     }
 
     pub(crate) fn persist_settings_change(&mut self) {

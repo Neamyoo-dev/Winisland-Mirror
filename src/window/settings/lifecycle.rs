@@ -117,7 +117,7 @@ impl SettingsApp {
     ) -> Result<(), String> {
         self.target_monitor = target_monitor;
         #[cfg(debug_assertions)]
-        self.verify_setting_placement();
+        self.report_unplaced_setting_fields();
         let id = window()
             .create_settings(SettingsSpec {
                 title: "WinIsland Settings",
