@@ -15,7 +15,7 @@ WinIsland 为 Windows 带来**灵动岛**体验。
 
 ## 下载
 
-本镜像通过 GitHub Actions 发布稳定版本构建。安装包使用自签名证书签名，Windows 首次运行时会显示 SmartScreen 警告，运行前请确认文件来源。这些是个人构建：没有支持承诺，也没有固定节奏。如果不希望安装，可以按下面的步骤从源码构建。
+下载在[Github Release](https://github.com/Neamyoo-dev/Winisland-Mirror/releases/)
 
 ## 构建项目
 
