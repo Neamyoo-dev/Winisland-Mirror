@@ -5,9 +5,9 @@ use std::sync::atomic::{AtomicU64, Ordering};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use crate::config::{
-    AppConfig, MIN_HIDDEN_WIDTH, WIDGET_GRID_SLOTS, clamp_schema_numbers, ensure_settings_widget,
-    migrate, normalize_compact_widget_layout, normalize_expanded_pages, normalize_resource_metrics,
-    set_resource_widget_span,
+    AppConfig, WIDGET_GRID_SLOTS, clamp_schema_numbers, ensure_settings_widget, migrate,
+    migrate_legacy_keys, normalize_compact_widget_layout, normalize_expanded_pages,
+    normalize_resource_metrics, set_resource_widget_span,
 };
 
 static NEXT_CONFIG_WRITE_ID: AtomicU64 = AtomicU64::new(1);
@@ -52,74 +52,7 @@ pub fn load_config_at(path: &Path) -> AppConfig {
         }
     };
     if let Ok(table) = toml::from_str::<toml::Table>(&content) {
-        if !table.contains_key("system_controls_overlay")
-            && (table.contains_key("replace_native_volume_flyout")
-                || table.contains_key("brightness_overlay_enabled"))
-        {
-            let volume = table
-                .get("replace_native_volume_flyout")
-                .and_then(toml::Value::as_bool)
-                .unwrap_or(true);
-            let brightness = table
-                .get("brightness_overlay_enabled")
-                .and_then(toml::Value::as_bool)
-                .unwrap_or(true);
-            config.system_controls_overlay = volume || brightness;
-        }
-        migrated |= [
-            "animation_fps",
-            "expanded_idle_fps",
-            "replace_native_volume_flyout",
-            "brightness_overlay_enabled",
-        ]
-        .iter()
-        .any(|key| table.contains_key(*key));
-        if !table.contains_key("fullscreen_auto_hide") {
-            config.fullscreen_auto_hide = config.auto_hide;
-            migrated = true;
-        }
-        if !table.contains_key("expanded_scale") {
-            config.expanded_scale = config.compact_scale;
-            migrated = true;
-        }
-        if let Some(fully_hide) = table.get("fully_hide").and_then(toml::Value::as_bool) {
-            if !table.contains_key("hidden_width") && fully_hide {
-                config.hidden_width = MIN_HIDDEN_WIDTH;
-            }
-            migrated = true;
-        }
-        if !table.contains_key("lyrics_mode") {
-            config.lyrics_mode = if config
-                .lyrics_local_dir
-                .as_deref()
-                .is_some_and(|dir| !dir.trim().is_empty())
-            {
-                "lrc"
-            } else {
-                "online"
-            }
-            .to_string();
-            migrated = true;
-        }
-        if let Some(entries) = table
-            .get("compact_widget_layout")
-            .and_then(toml::Value::as_array)
-        {
-            for (entry, raw_entry) in config.compact_widget_layout.iter_mut().zip(entries) {
-                if raw_entry
-                    .as_table()
-                    .is_some_and(|table| !table.contains_key("alignment"))
-                {
-                    entry.alignment =
-                        crate::config::CompactWidgetAlignment::legacy_slot(entry.slot);
-                    migrated = true;
-                }
-            }
-        }
-        if !table.contains_key("compact_resource_metrics") {
-            config.compact_resource_metrics = config.resource_metrics.clone();
-            migrated = true;
-        }
+        migrated |= migrate_legacy_keys(&table, &mut config);
     }
     let loaded_version = config.config_version;
     if migrate(&mut config, loaded_version) {
