@@ -313,7 +313,7 @@ impl App {
                                 &mut layout_config.plugin_widget_layout,
                                 &widgets,
                             ) {
-                                crate::core::persistence::save_config(&layout_config);
+                                crate::core::persistence::save_config_logged(&layout_config);
                             }
                             self.config.widget_layout = layout_config.widget_layout;
                             self.config.plugin_widget_layout = layout_config.plugin_widget_layout;

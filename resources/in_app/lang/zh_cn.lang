@@ -141,6 +141,7 @@ language=语言
 lang_name=中文
 hide_delay=隐藏延迟 (s)
 reset_defaults=恢复默认设置
+config_save_failed=设置已生效，但无法写入配置文件
 visit_homepage=访问项目主页
 smtc_control=SMTC 控制
 show_lyrics=显示歌词

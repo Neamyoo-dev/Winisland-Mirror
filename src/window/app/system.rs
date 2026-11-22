@@ -402,7 +402,7 @@ impl App {
             &mut config.plugin_widget_layout,
             &plugin_widgets,
         ) {
-            crate::core::persistence::save_config(&config);
+            crate::core::persistence::save_config_logged(&config);
         }
         let plugin_settings_pages = self
             .plugin_host
@@ -472,7 +472,7 @@ impl App {
             self.config.onboarding_completed = true;
             let mut config = load_config();
             config.onboarding_completed = true;
-            crate::core::persistence::save_config(&config);
+            crate::core::persistence::save_config_logged(&config);
         }
         log::info!("Beginner guide closed");
     }

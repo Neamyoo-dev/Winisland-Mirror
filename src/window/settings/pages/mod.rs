@@ -310,7 +310,29 @@ impl SettingsApp {
 
     pub(crate) fn persist_settings_change(&mut self) {
         self.mark_items_dirty();
-        crate::core::persistence::save_config(&self.config);
+        self.persist_config();
         self.request_redraw();
+    }
+
+    /// Writes the config and surfaces a failure on the page the user is looking at.
+    ///
+    /// The in-memory config stays authoritative either way: the user's change is
+    /// still applied for this session, and the banner says it did not reach disk.
+    pub(crate) fn persist_config(&mut self) {
+        let had_error = self.save_error.is_some();
+        self.save_error = match crate::core::persistence::save_config(&self.config) {
+            Ok(()) => None,
+            Err(error) => {
+                let message = format!(
+                    "{}: {error}",
+                    winisland_core::i18n::tr("config_save_failed")
+                );
+                log::error!("{message}");
+                Some(message)
+            }
+        };
+        if had_error || self.save_error.is_some() {
+            self.mark_items_dirty();
+        }
     }
 }

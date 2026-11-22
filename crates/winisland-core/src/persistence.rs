@@ -19,7 +19,7 @@ pub fn load_config_at(path: &Path) -> AppConfig {
         Err(error) if error.kind() == ErrorKind::NotFound => {
             log::info!("Config file not found, using defaults");
             let default = AppConfig::default();
-            save_config_at(path, &default);
+            save_after_load(path, &default);
             return default;
         }
         Err(error) => {
@@ -38,7 +38,7 @@ pub fn load_config_at(path: &Path) -> AppConfig {
                         backup.display()
                     );
                     let default = AppConfig::default();
-                    save_config_at(path, &default);
+                    save_after_load(path, &default);
                     return default;
                 }
                 Err(backup_error) => {
@@ -232,23 +232,51 @@ pub fn load_config_at(path: &Path) -> AppConfig {
         migrated = true;
     }
     if migrated {
-        save_config_at(path, &config);
+        save_after_load(path, &config);
     }
     config
 }
 
-pub fn save_config_at(path: &Path, config: &AppConfig) {
-    let content = match toml::to_string_pretty(config) {
-        Ok(content) => content,
-        Err(error) => {
-            log::error!("Cannot serialize config: {error}");
-            return;
-        }
-    };
-    if let Err(error) = write_config_atomically(path, content.as_bytes()) {
+pub fn save_config_at(path: &Path, config: &AppConfig) -> Result<(), PersistError> {
+    let content = toml::to_string_pretty(config)
+        .map_err(|error| PersistError::Serialize(error.to_string()))?;
+    write_config_atomically(path, content.as_bytes()).map_err(PersistError::Write)?;
+    log::info!("Config saved to: {}", path.display());
+    Ok(())
+}
+
+/// Writes the config after a load that had to repair it.
+///
+/// The caller is a load path with nothing to report to; the error is logged
+/// instead of returned so that a read-only config directory still yields the
+/// repaired in-memory config.
+fn save_after_load(path: &Path, config: &AppConfig) {
+    if let Err(error) = save_config_at(path, config) {
         log::error!("Cannot save config '{}': {error}", path.display());
-    } else {
-        log::info!("Config saved to: {}", path.display());
+    }
+}
+
+#[derive(Debug)]
+pub enum PersistError {
+    Serialize(String),
+    Write(std::io::Error),
+}
+
+impl std::fmt::Display for PersistError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Serialize(message) => write!(f, "cannot serialize config: {message}"),
+            Self::Write(error) => write!(f, "cannot write config: {error}"),
+        }
+    }
+}
+
+impl std::error::Error for PersistError {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            Self::Write(error) => Some(error),
+            Self::Serialize(_) => None,
+        }
     }
 }
 

@@ -141,6 +141,7 @@ language=Language
 lang_name=English
 hide_delay=Hide Delay (s)
 reset_defaults=Reset to Defaults
+config_save_failed=Settings were applied but could not be saved
 visit_homepage=Visit Project Homepage
 smtc_control=SMTC Control
 show_lyrics=Show Lyrics
