@@ -11,7 +11,7 @@ English | [简体中文](./README-zh.md)
 > WinIsland source and its full history, kept alive after the original
 > organisation stopped being reachable.
 >
-> It does **not** accept pull requests or issues. Anything opened here is closed
+> It does **not** accept pull requests. Anything opened here is closed
 > without review. There is no support commitment and no release schedule.
 
 WinIsland brings the **Dynamic Island** experience to Windows.
